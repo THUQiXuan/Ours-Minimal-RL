@@ -3,11 +3,8 @@
 ## Environment Setup
 1. Create a new environment.
    ```bash
-   python -m venv ~/.python/raftpp
-   source ~/.python/raftpp/bin/activate
-   # You can also use conda 
-   #conda create -n raftpp python==3.10
-   #conda activate raftpp
+   conda create -n raftpp python==3.10
+   conda activate raftpp
    ```
 2. Install dependencies
    ```bash
