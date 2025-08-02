@@ -24,7 +24,10 @@
     python scripts/data_preprocess/math_dataset.py
     python scripts/data_preprocess/numina_math.py
     ```
-2. Start the training loop.
+    
+2. Change the `model_name_or_path` to path of model in `scripts/run_grpo8.sh`
+
+3. Start the training loop.
    ```bash
    bash scripts/run_grpo8.sh
    ```
