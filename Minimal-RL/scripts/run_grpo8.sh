@@ -7,7 +7,8 @@ algorithm=grpo
 model=Qwen2.5-Math-1.5B
 model_name_or_path=/scratch/gpfs/xq5452/model/models--Qwen--Qwen2.5-Math-1.5B/snapshots/4a83ca6e4526a4f2da3aa259ec36c259f66b2ab2
 n=4
-experiment_name=${model}-${algorithm}-${data}-n${n}
+decay_rate=0.99  # Default value of decay rate, modify as needed
+experiment_name=${model}-${algorithm}-${data}-n${n}-decay${decay_rate}
 GPUS=(0 1 2 3 4 5 6 7)
 my_world_size=${#GPUS[@]}
 
@@ -21,6 +22,7 @@ mkdir -p logs/${project_name}
 
 CUDA_VISIBLE_DEVICES=$(IFS=,; echo "${GPUS[*]}") python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=$algorithm \
+    algorithm.decay_rate=$decay_rate \
     data.train_files="$train_files" \
     data.val_files="$test_files" \
     data.train_batch_size=1024 \

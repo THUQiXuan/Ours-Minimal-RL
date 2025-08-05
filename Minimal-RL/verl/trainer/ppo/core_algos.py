@@ -177,7 +177,8 @@ def compute_reinforce_rej_outcome_advantage(token_level_rewards: torch.Tensor,
 def compute_grpo_outcome_advantage(token_level_rewards: torch.Tensor,
                                    response_mask: torch.Tensor,
                                    index: np.ndarray,
-                                   epsilon: float = 1e-6):
+                                   epsilon: float = 1e-6,
+                                   decay_rate: float = 1.0):
     """
     Compute advantage for GRPO, operating only on Outcome reward 
     (with only one scalar reward for each response).
@@ -186,6 +187,8 @@ def compute_grpo_outcome_advantage(token_level_rewards: torch.Tensor,
             shape: (bs, response_length)
         response_mask: `(torch.Tensor)`
             shape: (bs, response_length)
+        decay_rate: `(float)`
+            Decay rate for token weights. The t-th token's weight will be decay_rate^t
     
     Returns:
         advantages: `(torch.Tensor)`
@@ -193,7 +196,17 @@ def compute_grpo_outcome_advantage(token_level_rewards: torch.Tensor,
         Returns: `(torch.Tensor)`
             shape: (bs, response_length)
     """
-    scores = token_level_rewards.sum(dim=-1)
+    # Calculate weighted sum of rewards
+    bsz, seq_len = token_level_rewards.shape
+    weight = torch.ones_like(token_level_rewards)
+    
+    # Apply decay rate to weights: r^t for each token position t
+    for t in range(seq_len):
+        weight[:, t] = decay_rate ** t
+        
+    # Apply weights and mask, then sum
+    weighted_rewards = token_level_rewards * weight * response_mask
+    scores = weighted_rewards.sum(dim=-1)
 
     id2score = defaultdict(list)
     id2mean = {}

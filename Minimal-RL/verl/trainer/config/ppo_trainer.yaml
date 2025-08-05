@@ -191,6 +191,7 @@ algorithm:
     kl_coef: 0.001
     horizon: 10000
     target_kl: 0.1
+  decay_rate: 1.0
 
 trainer:
   balance_batch: True
